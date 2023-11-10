@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Define emotional states
+    const emotionalStates = ["Worried/depressed(-3)", "Disgusted/sad(-2)", "Unpleasant feeling(-1)","Neutral(0)","Pleasant feeling(+1)","Happy(+2)",  "Elated(+3)"];
+    
+    // Initialize an array to store emotional states for each day
+    let emotionalData = Array(30).fill(0);
+
+    function updateChart() {
+      const ctx = document.getElementById('myChart').getContext('2d');
+
+      // Define chart data
+      const data = {
+        labels: Array.from({length: 30}, (_, i) => (i + 1).toString()),
+        datasets: [{
+          label: 'Emotional States',
+          data: emotionalData,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          fill:true,
+          backgroundColor:'rgb(212, 176, 174)',
+          hoverBorderColor:'yellow'
+        }]
+      };
+
+      // Define chart options
+      const options = {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value, index) {
+                return emotionalStates[value + 3];
+              }
+            }
+          }
+        },
+        onClick: function(event, elements) {
+          if (elements.length > 0) {
+            const index = elements[0].index;
+            const emotionalState = prompt(`Enter emotional state for day ${index + 1}:\n\n${emotionalStates.join('\n')}`);
+            if (emotionalState !== null) {
+              const newState = parseInt(emotionalState);
+              if (!isNaN(newState) && newState >= -3 && newState <= 3) {
+                emotionalData[index] = newState;
+                updateChart();
+              } else {
+                alert("Please enter a valid emotional state between -3 and 3.");
+              }
+            }
+          }
+        }
+      };
+
+      // Create the chart
+      const myChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: options
+      });
+    }
+
+    window.onload = function() {
+      updateChart();
+    }
+  </script>
+</head>
+<body>
+  <canvas id="myChart" width="800" height="400"></canvas>
+</body>
+</html>
